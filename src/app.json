@@ -29,9 +29,49 @@
                 "app-widget": {
                     "widgets": [
                         {
-                            "path": "app-widget/index",
-                            "icon": "icon.png",
-                            "name": "calories",
+                            "path": "app-widget/Profile",
+                            "icon": "icon@128.png",
+                            "name": "GitHub Profile",
+                            "i18n": {
+                                "en-US": {
+                                    "name": "GitHub Profile"
+                                },
+                                "zh-CN": {
+                                    "name": "GitHub Profile"
+                                }
+                            },
+                            "runtime": {
+                                "type": "js"
+                            }
+                        },
+                        {
+                            "path": "app-widget/Board1",
+                            "icon": "icon@128.png",
+                            "name": "GitHub Board 1",
+                            "i18n": {
+                                "en-US": {
+                                    "name": "GitHub Board 1"
+                                },
+                                "zh-CN": {
+                                    "name": "GitHub Board 1"
+                                }
+                            },
+                            "runtime": {
+                                "type": "js"
+                            }
+                        },
+                        {
+                            "path": "app-widget/Board2",
+                            "icon": "icon@128.png",
+                            "name": "GitHub Board 2",
+                            "i18n": {
+                                "en-US": {
+                                    "name": "GitHub Board 2"
+                                },
+                                "zh-CN": {
+                                    "name": "GitHub Board 2"
+                                }
+                            },
                             "runtime": {
                                 "type": "js"
                             }
@@ -59,7 +99,7 @@
     },
     "i18n": {
         "en-US": {
-            "appName": "Empty"
+            "appName": "GitHub Widget"
         }
     },
     "defaultLanguage": "en-US"
