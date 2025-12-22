@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@x1a0ma17x/zeppos-reactive':
+        specifier: ^1.0.2
+        version: 1.0.2
+      '@zeppos/zml':
+        specifier: 0.0.26
+        version: 0.0.26
     devDependencies:
       '@zeppos/device-types':
         specifier: ^3.0.0
@@ -14,9 +21,19 @@ importers:
 
 packages:
 
+  '@x1a0ma17x/zeppos-reactive@1.0.2':
+    resolution: {integrity: sha512-zIV/hda4S0zOIhQB/Ya1wYYeNelLlcZ20BCBd5PgDtgvovohY6Nys62utrUAUbJKfZdRxhfLah/ra8I+rzWHlg==}
+
   '@zeppos/device-types@3.0.1':
     resolution: {integrity: sha512-7rUsKLFiTdwIU3NarEKbEoQjr2X1kE6/8ra+mM3+zXDnwhELPowwC4Sl5UGS71PjTa9Rb+s4WygOHkjeEmJcoA==}
 
+  '@zeppos/zml@0.0.26':
+    resolution: {integrity: sha512-e9/rHSYgv+BzRgcspS+Fz+V70JEWCJnk/LUokDw1lJaKVffsAMINVGE/+KbjOWInvhTyiv9Z0wHiEZa1CIcbLA==}
+
 snapshots:
 
+  '@x1a0ma17x/zeppos-reactive@1.0.2': {}
+
   '@zeppos/device-types@3.0.1': {}
+
+  '@zeppos/zml@0.0.26': {}
