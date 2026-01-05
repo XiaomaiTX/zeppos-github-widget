@@ -1,0 +1,23 @@
+query GetUserInfo($username: String!) {
+    user(login: $username) {
+        login
+        avatarUrl
+        name
+        company
+        followers {
+            totalCount
+        }
+        following {
+            totalCount
+        }
+        location
+        email
+        websiteUrl
+        socialAccounts(first: 10) {
+            nodes {
+                provider
+                url
+            }
+        }
+    }
+}

@@ -4,8 +4,9 @@ import { log as Logger, px } from "@zos/utils";
 import {
     generateHeatmapData,
     generateHeatmapBoxes,
-    genRamdomLevel,
+    convertToHeatmapData,
 } from "../utils/method";
+import { exampleHeatmapData } from "../utils/test-data";
 
 const logger = Logger.getLogger("calories");
 
@@ -51,10 +52,8 @@ AppWidget({
                 h: px(156),
             });
 
-            const githubHeatmapData = generateHeatmapData(
-                "2022-01-01",
-                "2022-03-31"
-            );
+            const githubHeatmapData = convertToHeatmapData(exampleHeatmapData);
+            
 
             const boxPerRow = 16;
             const rows = 7;

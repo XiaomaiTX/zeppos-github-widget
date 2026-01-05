@@ -125,7 +125,7 @@ export function getMonthLabels(heatmapData, boxPerRow, boxSize, spacing) {
     }
     
     labels.sort((a, b) => a.x - b.x);
-    
+                
     const filteredLabels = [];
     let lastX = -Infinity;
     const minDistance = cellWidth * 3;
@@ -145,7 +145,7 @@ export function getMonthLabels(heatmapData, boxPerRow, boxSize, spacing) {
     return filteredLabels;
 }
 
-function convertToHeatmapData(githubData) {
+export function convertToHeatmapData(githubData) {
   const colorToLevel = {
     '#ebedf0': 1,  // 无贡献
     '#9be9a8': 2,  // 等级1

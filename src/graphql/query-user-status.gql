@@ -1,0 +1,32 @@
+query GetStats($username: String!) {
+    user(login: $username) {
+        login
+
+        repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+            nodes {
+                stargazerCount
+            }
+        }
+
+        currentYearContributions: contributionsCollection(
+            from: "2025-01-01T00:00:00Z"
+        ) {
+            totalCommitContributions
+            totalPullRequestContributions
+            totalIssueContributions
+            totalRepositoriesWithContributedCommits
+        }
+
+        lastYearContributions: contributionsCollection(
+            from: "2024-01-01T00:00:00Z"
+            to: "2024-12-31T23:59:59Z"
+        ) {
+            totalRepositoriesWithContributedCommits
+            commitContributionsByRepository(maxRepositories: 100) {
+                repository {
+                    nameWithOwner
+                }
+            }
+        }
+    }
+}

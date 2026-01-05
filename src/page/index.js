@@ -8,7 +8,6 @@ Page(
     BasePage({
         build() {
             console.log("[1]");
-            hmRouter.back()
             // this.httpRequest({
             //     method: "post",
             //     url: "https://api.github.com/graphql",
@@ -30,6 +29,8 @@ Page(
             //     .catch((error) => {
             //         console.error("error=>", error);
             //     });
+
+            
             // this.httpRequest({
             //     method: "get",
             //     url: "https://n8n.cafero.town/webhook-test/c39784c1-3622-4206-961b-0ddc712244d7",
