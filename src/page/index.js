@@ -8,6 +8,20 @@ Page(
     BasePage({
         build() {
             console.log("[1]");
+            const requestPromise = this.request({
+                method: "GitHubWidget.GetToken",
+                params: {},
+            })
+            requestPromise
+                .then((result) => {
+                    // receive your data
+                    console.log("result=>", result.token);
+                })
+                .catch((error) => {
+                    // receive your error
+                    console.error("error=>", error);
+                });
+               
             // this.httpRequest({
             //     method: "post",
             //     url: "https://api.github.com/graphql",
@@ -30,7 +44,6 @@ Page(
             //         console.error("error=>", error);
             //     });
 
-            
             // this.httpRequest({
             //     method: "get",
             //     url: "https://n8n.cafero.town/webhook-test/c39784c1-3622-4206-961b-0ddc712244d7",
