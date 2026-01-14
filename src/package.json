@@ -12,7 +12,10 @@
     "@zeppos/device-types": "^3.0.0"
   },
   "dependencies": {
+    "@silver-zepp/easy-storage": "^2.0.3",
+    "@x1a0ma17x/zeppos-fx": "^2.0.4",
     "@x1a0ma17x/zeppos-reactive": "^1.0.2",
-    "@zeppos/zml": "0.0.26"
+    "@zeppos/zml": "^0.0.43",
+    "crypto-es": "^3.1.2"
   }
 }

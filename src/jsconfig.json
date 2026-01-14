@@ -2,8 +2,14 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "checkJs": true
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/utils/*": ["./utils/*"]
+    }
   },
   "exclude": ["node_modules", "**/node_modules/*"],
+  "include": ["**/*.js"],
   "files": ["node_modules/@zeppos/device-types/dist/index.d.ts"]
 }

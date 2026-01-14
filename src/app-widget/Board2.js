@@ -6,7 +6,7 @@ import {
     generateHeatmapBoxes,
     convertToHeatmapData,
 } from "../utils/method";
-import { exampleHeatmapData } from "../utils/test-data";
+import { testContributionsData } from "../graphql/test-data-contributions";
 
 const logger = Logger.getLogger("calories");
 
@@ -52,7 +52,7 @@ AppWidget({
                 h: px(156),
             });
 
-            const githubHeatmapData = convertToHeatmapData(exampleHeatmapData);
+            const githubHeatmapData = convertToHeatmapData(testContributionsData.data);
             
 
             const boxPerRow = 16;

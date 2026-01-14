@@ -10,7 +10,8 @@ import {
     getMonthLabels,
     convertToHeatmapData,
 } from "../utils/method";
-import { exampleHeatmapData } from "../utils/test-data";
+
+import { testContributionsData } from "../graphql/test-data-contributions";
 
 import * as Layout from "./Board1.layout";
 
@@ -35,26 +36,12 @@ AppWidget(
             });
 
             try {
-                // this.httpRequest({
-                //     method: "get",
-                //     url: "https://n8n.cafero.town/webhook-test/c39784c1-3622-4206-961b-0ddc712244d7",
-                // })
-                //     .then((result) => {
-                //         console.log("result.status", result.status);
-                //         console.log("result.statusText", result.statusText);
-                //         console.log("result.body", result.body);
-                //         console.log("result.body length", result.body.length);
-                //     })
-                //     .catch((error) => {
-                //         console.error("error=>", error);
-                //     });
-
                 state.githubHeatmapData = computed(() => {
-                    return convertToHeatmapData(exampleHeatmapData);
+                    return convertToHeatmapData(testContributionsData.data);
                 });
 
                 state.totalContributions =
-                    exampleHeatmapData.user.contributionsCollection.contributionCalendar.totalContributions;
+                    testContributionsData.data.user.contributionsCollection.contributionCalendar.totalContributions;
 
                 const backgroundFillRect = hmUI.createWidget(
                     hmUI.widget.FILL_RECT,
