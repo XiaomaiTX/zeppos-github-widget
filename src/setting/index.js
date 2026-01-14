@@ -16,30 +16,9 @@ AppSettingsPage({
         props: {},
         githubToken: "",
     },
-    setItem(key, value) {
-        // 确保存储的值是原始字符串
-        const newString =
-            typeof value === "string" ? value : JSON.stringify(value);
-        this.state.props.settingsStorage.setItem(key, newString);
-        const result = this.state.props.settingsStorage.getItem(key);
-        console.log("result=>", result);
-        console.log("setsuccess");
-    },
-    getItem(key) {
-        // 从 settingsStorage 中读取值，并确保返回原始字符串
-        const value = this.state.props.settingsStorage.getItem(key);
-        try {
-            return JSON.parse(value); // 尝试反序列化为对象
-        } catch (e) {
-            return value; // 如果反序列化失败，返回原始字符串
-        }
-    },
-    setState(props) {
-        this.state.props = props;
-    },
 
     build(props) {
-        this.setState(props);
+        // this.setState(props);
 
         return View(
             {
@@ -57,7 +36,7 @@ AppSettingsPage({
             [
                 View({ style: styleViewCard }, [
                     TextInput({
-                        label: "GitHub Token",
+                        label: "Update GitHub Token",
                         labelStyle: {
                             display: "inline-block",
                             padding: "0 16px",
@@ -90,12 +69,19 @@ AppSettingsPage({
                         },
                         disabled: false,
                         placeholder: "输入GitHub Token",
-                        value: this.state.githubToken,
+                        value: this.state.githubToken.replace(/./g, "*"),
                         multiline: true,
                         rows: 5,
                         onChange: (val) => {
                             this.state.githubToken = val;
-                            this.setItem("githubToken", val);
+                            try {
+                                props.settingsStorage.setItem("GithubWidget.Token", val)
+                                this.state.githubToken = "";
+                            } catch (error) {
+                                console.error("set token failed:", error);
+
+                                
+                            }
                         },
                     }),
                 ]),
