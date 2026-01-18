@@ -23,7 +23,7 @@ export class ScrollListPage {
             ...this.styles.SETTINGS_CONTAINER_STYLE,
             h:
                 this.state.items.length *
-                (this.styles.SETTINGS_BUTTON_STYLE.h + px(10)),
+                (this.styles.SETTINGS_BUTTON_STYLE.h + px(10)) + px(100),
         });
 
         for (let i = 0; i < this.state.items.length; i++) {
@@ -212,17 +212,17 @@ const Styles = {
         x: px(0),
         y: px(0),
         w: px(420),
-        h: px(80),
+        h: px(100),
         radius: px(10),
         color: 0x0a0a0a,
     },
     SETTINGS_BUTTON_TITLE_STYLE: {
         x: px(20),
-        y: px(23),
+        y: px(25),
         w: px(380),
-        h: px(35),
+        h: px(50),
         color: 0xffffff,
-        text_size: px(24),
+        text_size: px(36),
         align_h: hmUI.align.LEFT,
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
@@ -233,9 +233,9 @@ const Styles = {
         x: px(20),
         y: px(8),
         w: px(380),
-        h: px(35),
+        h: px(42),
         color: 0xffffff,
-        text_size: px(20),
+        text_size: px(36),
         align_h: hmUI.align.LEFT,
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
@@ -243,11 +243,11 @@ const Styles = {
     },
     SETTINGS_BUTTON_DESCRIPTION_STYLE: {
         x: px(20),
-        y: px(37),
+        y: px(50),
         w: px(380),
-        h: px(35),
+        h: px(36),
         color: 0x9e9e9e,
-        text_size: px(20),
+        text_size: px(32),
         align_h: hmUI.align.LEFT,
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
