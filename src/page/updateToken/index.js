@@ -32,9 +32,9 @@ Page(
         },
         build() {
             setInterval(() => {
-                console.log(state.code);
+                console.log("[get token request]:", state.code);
                 this.getTokenFromCode(state.code);
-            }, 1000);
+            }, 10000);
             state.pageData = computed(() => ({
                 title: "Update Token",
                 items: [
@@ -58,14 +58,21 @@ Page(
 
         getTokenFromCode(code) {
             // if (typeof code !== "string") {
-            this.request({
+            this.httpRequest({
                 method: "get",
-                url: `http://cafero-n8n:5678/webhook-test/get-token?code=${code}`,
-            }).then((res) => {
-                console.log(res);
-                // if (res.status === 200 && res.data.token) {
-                    // state.token = res.data.token;
-                    state.token = "test_token_sbxsaoxsa";
+                url: `https://n8n.cafero.town/webhook/get-token?code=${code}`,
+                // url: `https://n8n.cafero.town/webhook-test/ping`,
+            }).then((res) => {                
+                // 检查响应状态码是否为200
+                // if (res.status !== 200) {
+                //     console.error("请求失败，状态码：", res.status);
+                //     return;
+                // }    
+                console.log("[get token response]:", JSON.stringify(res.body));
+                if (res.body.token && res.body.token !== "") {
+                    state.token = res.body.token;
+                    // state.token = "test_token_caonimabi";
+                    console.log("[get token]:", state.token);
                     state.encryptedToken = AES.encrypt(
                         state.token,
                         state.uuid
@@ -81,7 +88,10 @@ Page(
                             }
                         }
                     );
-                // }
+                }
+                else {
+                    console.error("请求失败，状态码：", res.status);
+                }
             });
         },
         onDestroy() {

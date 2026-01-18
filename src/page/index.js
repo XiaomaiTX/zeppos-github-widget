@@ -3,6 +3,7 @@ import * as hmUI from "@zos/ui";
 import * as hmRouter from "@zos/router";
 import * as hmDevice from "@zos/device";
 import * as hmSensor from "@zos/sensor";
+import * as hmInteraction from "@zos/interaction";
 
 import { BasePage } from "@zeppos/zml/base-page";
 import { AsyncStorage } from "@silver-zepp/easy-storage";
@@ -37,7 +38,7 @@ Page(
                     if (state.encryptedToken) {
                         state.token = AES.decrypt(
                             state.encryptedToken,
-                            state.uuid
+                            state.uuid,
                         ).toString(Utf8);
                     }
                 } else {
@@ -54,13 +55,13 @@ Page(
                         },
                         (err, ok) => {
                             if (ok) console.log("[config.json] created");
-                        }
+                        },
                     );
                 }
             });
 
             state.pageData = computed(() => ({
-                title: "GitHub Widget",
+                title: "Settings",
                 items: [
                     {
                         title: "Github Token Status",
@@ -79,6 +80,7 @@ Page(
                         description: state.lastUpdateTime
                             ? new Date(state.lastUpdateTime).toLocaleString()
                             : "Never",
+                        action: () => this.updateGithubData(),
                     },
                     {
                         title: "Clear Token",
@@ -103,7 +105,7 @@ Page(
         isHaveToUpdate(
             currentTimestamp,
             last_update_timestamp,
-            updateInterval
+            updateInterval,
         ) {
             if (currentTimestamp - last_update_timestamp >= updateInterval)
                 console.log("[isHaveToUpdate] true");
@@ -116,21 +118,50 @@ Page(
             });
         },
         clearToken() {
-            state.token = "";
-            state.encryptedToken = "";
-            AsyncStorage.ReadJson("config.json", (err, config) => {
-                if (!err) {
-                    config.settings.encryptedToken = state.encryptedToken;
-                    AsyncStorage.WriteJson("config.json", config, (err, ok) => {
-                        if (ok) console.log("[clearToken] updated");
-                    });
-                }
+            const clearTokenDialog = hmInteraction.createModal({
+                content: "Are you sure to clear the token?",
+                onClick: (keyObj) => {
+                    const { type } = keyObj;
+                    if (type === hmInteraction.MODAL_CONFIRM) {
+                        console.log("confirm");
+                        state.token = "";
+                        state.encryptedToken = "";
+                        AsyncStorage.ReadJson("config.json", (err, config) => {
+                            if (!err) {
+                                config.settings.encryptedToken =
+                                    state.encryptedToken;
+                                AsyncStorage.WriteJson(
+                                    "config.json",
+                                    config,
+                                    (err, ok) => {
+                                        if (ok)
+                                            console.log("[clearToken] updated");
+                                    },
+                                );
+                            }
+                        });
+                        clearTokenDialog.show(false);
+                    } else {
+                        clearTokenDialog.show(false);
+                    }
+                },
             });
         },
         clearData() {
-            state.lastUpdateTime = "";
-            AsyncStorage.RemoveFile("config.json", (err, ok) => {
-                if (ok) hmRouter.back();
+            const clearDataDialog = hmInteraction.createModal({
+                content: "Are you sure to clear all data?",
+                onClick: (keyObj) => {
+                    const { type } = keyObj;
+                    if (type === hmInteraction.MODAL_CONFIRM) {
+                        console.log("confirm");
+                        AsyncStorage.RemoveJson("config.json", (err, ok) => {
+                            if (ok) console.log("[clearData] updated");
+                        });
+                        clearDataDialog.show(false);
+                    } else {
+                        clearDataDialog.show(false);
+                    }
+                },
             });
         },
         checkLastUpdateTime() {
@@ -164,7 +195,29 @@ Page(
                     console.log("result.status", result.status);
                     console.log("result.statusText", result.statusText);
                     console.log("result.body", result.body);
-                    console.log("result.body length", result.body.length);
+
+                    if (result.status === 200) {
+                        const data = JSON.parse(result.body);
+                        AsyncStorage.ReadJson("config.json", (err, config) => {
+                            if (!err) {
+                                config.settings.last_update_timestamp =
+                                    Date.now();
+
+                                AsyncStorage.WriteJson(
+                                    "config.json",
+                                    config,
+                                    (err, ok) => {
+                                        if (ok)
+                                            state.lastUpdateTime =
+                                                config.settings.last_update_timestamp;
+                                        console.log(
+                                            "[updateGithubData] updated",
+                                        );
+                                    },
+                                );
+                            }
+                        });
+                    }
                 })
                 .catch((error) => {
                     console.error("error=>", error);
@@ -177,5 +230,5 @@ Page(
             }
         },
         onDestroy() {},
-    })
+    }),
 );
