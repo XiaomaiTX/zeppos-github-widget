@@ -44,7 +44,7 @@ Page(
                     },
                     {
                         title: "How to get token",
-                        description: "Go to https://n8n.cafero.town/token",
+                        description: "Go to https://n8n.cafero.town/github-widget/token",
                     },
                 ],
             }));
@@ -60,7 +60,7 @@ Page(
             // if (typeof code !== "string") {
             this.httpRequest({
                 method: "get",
-                url: `https://n8n.cafero.town/webhook/get-token?code=${code}`,
+                url: `https://n8n.cafero.town/webhook/github-widget/get-token?code=${code}`,
                 // url: `https://n8n.cafero.town/webhook-test/ping`,
             }).then((res) => {                
                 // 检查响应状态码是否为200
