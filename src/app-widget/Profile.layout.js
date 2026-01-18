@@ -33,33 +33,33 @@ export const LOGIN_TEXT = {
     x: px(130),
     y: px(55),
     w: px(250),
-    h: px(20),
+    h: px(34),
 };
 
 export const COMPANY_TEXT = {
     x: px(60),
     y: px(90),
     w: px(200),
-    h: px(20),
+    h: px(34),
 };
 
 export const FOLLOWERS_TEXT = {
     x: px(270),
     y: px(90),
     w: px(100),
-    h: px(20),
+    h: px(34),
 };
 
 export const LOCATION_TEXT = {
     x: px(60),
     y: px(115),
     w: px(200),
-    h: px(20),
+    h: px(34),
 };
 
 export const FOLLOWING_TEXT = {
     x: px(270),
     y: px(115),
     w: px(100),
-    h: px(20),
+    h: px(34),
 };

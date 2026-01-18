@@ -63,46 +63,46 @@ AppWidget(
 
                 const loginText = hmUI.createWidget(hmUI.widget.TEXT, {
                     ...Layout.LOGIN_TEXT,
-                    text_size: px(14),
+                    text_size: px(24),
                     color: 0x8b949e,
                     text: `@${state.userData.login}`,
                 });
 
-                const companyText = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.COMPANY_TEXT,
-                    text_size: px(14),
-                    color: 0x8b949e,
-                    text: state.userData.company || "No company",
-                });
+                // const companyText = hmUI.createWidget(hmUI.widget.TEXT, {
+                //     ...Layout.COMPANY_TEXT,
+                //     text_size: px(24),
+                //     color: 0x8b949e,
+                //     text: state.userData.company || "No company",
+                // });
 
-                const followersText = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.FOLLOWERS_TEXT,
-                    text_size: px(14),
-                    color: 0x8b949e,
-                    text: `${state.userData.followers.totalCount} followers`,
-                });
+                // const followersText = hmUI.createWidget(hmUI.widget.TEXT, {
+                //     ...Layout.FOLLOWERS_TEXT,
+                //     text_size: px(24),
+                //     color: 0x8b949e,
+                //     text: `${state.userData.followers.totalCount} followers`,
+                // });
 
-                const locationText = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.LOCATION_TEXT,
-                    text_size: px(14),
-                    color: 0x8b949e,
-                    text: state.userData.location || "No location",
-                });
+                // const locationText = hmUI.createWidget(hmUI.widget.TEXT, {
+                //     ...Layout.LOCATION_TEXT,
+                //     text_size: px(24),
+                //     color: 0x8b949e,
+                //     text: state.userData.location || "No location",
+                // });
 
-                const followingText = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.FOLLOWING_TEXT,
-                    text_size: px(14),
-                    color: 0x8b949e,
-                    text: `${state.userData.following.totalCount} following`,
-                });
+                // const followingText = hmUI.createWidget(hmUI.widget.TEXT, {
+                //     ...Layout.FOLLOWING_TEXT,
+                //     text_size: px(24),
+                //     color: 0x8b949e,
+                //     text: `${state.userData.following.totalCount} following`,
+                // });
 
                 state.widgets.avatarImg = avatarImg;
                 state.widgets.nameText = nameText;
                 state.widgets.loginText = loginText;
-                state.widgets.companyText = companyText;
-                state.widgets.followersText = followersText;
-                state.widgets.locationText = locationText;
-                state.widgets.followingText = followingText;
+                // state.widgets.companyText = companyText;
+                // state.widgets.followersText = followersText;
+                // state.widgets.locationText = locationText;
+                // state.widgets.followingText = followingText;
 
             } catch (error) {
                 logger.log(error);
