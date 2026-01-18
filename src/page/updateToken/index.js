@@ -34,7 +34,7 @@ Page(
             setInterval(() => {
                 console.log("[get token request]:", state.code);
                 this.getTokenFromCode(state.code);
-            }, 10000);
+            }, 5000);
             state.pageData = computed(() => ({
                 title: "Update Token",
                 items: [
