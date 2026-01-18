@@ -255,7 +255,7 @@ const Styles = {
     },
     SETTINGS_BUTTON_ICON_STYLE: {
         x: px(375),
-        y: px(29),
+        y: px(38),
         w: px(24),
         h: px(24),
     },
