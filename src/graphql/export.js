@@ -54,7 +54,7 @@ query GetStats($username: String!) {
         }
 
         currentYearContributions: contributionsCollection(
-            from: "2025-01-01T00:00:00Z"
+            from: "${new Date().getFullYear()}-01-01T00:00:00Z"
         ) {
             totalCommitContributions
             totalPullRequestContributions
@@ -63,8 +63,8 @@ query GetStats($username: String!) {
         }
 
         lastYearContributions: contributionsCollection(
-            from: "2024-01-01T00:00:00Z"
-            to: "2024-12-31T23:59:59Z"
+            from: "${new Date().getFullYear() - 1}-01-01T00:00:00Z"
+            to: "${new Date().getFullYear() - 1}-12-31T23:59:59Z"
         ) {
             totalRepositoriesWithContributedCommits
             commitContributionsByRepository(maxRepositories: 100) {
