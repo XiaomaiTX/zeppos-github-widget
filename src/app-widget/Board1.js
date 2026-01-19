@@ -56,17 +56,17 @@ AppWidget(
                 const contributions = localStorage.getItem(
                     "github-widget.contributions",
                 );
-                const githubHeatmapData = convertToHeatmapData(
+                state.githubHeatmapData = convertToHeatmapData(
                     JSON.parse(contributions).data,
                 );
 
-                const totalContributions =
+                state.totalContributions =
                     JSON.parse(contributions).data.user.contributionsCollection
                         .contributionCalendar.totalContributions;
 
                 const contributionText = hmUI.createWidget(hmUI.widget.TEXT, {
                     ...Layout.CONTRIBUTION_TEXT,
-                    text: `${totalContributions} Contributions`,
+                    text: `${state.totalContributions} Contributions`,
                     text_size: px(14),
                     align_h: hmUI.align.LEFT,
                     align_v: hmUI.align.CENTER_V,
@@ -91,6 +91,16 @@ AppWidget(
                 const rows = 7;
                 const boxSize = px(12);
                 const spacing = px(3);
+                effect(() => {
+                    console.log("[effect]");
+                    this.updateHeatmapUI(
+                        state.githubHeatmapData,
+                        boxPerRow,
+                        rows,
+                        boxSize,
+                        spacing
+                    );
+                });
             } catch (error) {
                 console.log(error);
             }
@@ -134,13 +144,6 @@ AppWidget(
             });
         },
         onResume() {
-            this.updateHeatmapUI(
-                githubHeatmapData,
-                boxPerRow,
-                rows,
-                boxSize,
-                spacing,
-            );
         },
     }),
 );

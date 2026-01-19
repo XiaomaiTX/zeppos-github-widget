@@ -2,12 +2,17 @@ import * as hmUI from "@zos/ui";
 import { px } from "@zos/utils";
 import * as hmRouter from "@zos/router";
 import { LocalStorage } from "@zos/storage";
+import { reactive } from "@x1a0ma17x/zeppos-reactive";
 
 import {
     generateHeatmapData,
     generateHeatmapBoxes,
     convertToHeatmapData,
 } from "../utils/method";
+
+const state = reactive({
+    githubHeatmapData: [],
+});
 
 AppWidget({
     onInit() {
@@ -50,10 +55,10 @@ AppWidget({
             const contributionsData = localStorage.getItem(
                 "github-widget.contributions",
             );
-            const githubHeatmapData = convertToHeatmapData(
+            state.githubHeatmapData = convertToHeatmapData(
                 JSON.parse(contributionsData).data,
             );
-            console.log("[build] githubHeatmapData", githubHeatmapData);
+            console.log("[build] githubHeatmapData", state.githubHeatmapData);
 
             const boxPerRow = 16;
             const rows = 7;
@@ -61,7 +66,7 @@ AppWidget({
             const spacing = 5;
 
             const boxList = generateHeatmapBoxes(
-                githubHeatmapData,
+                state.githubHeatmapData,
                 boxPerRow,
                 rows,
                 boxSize,
