@@ -56,7 +56,7 @@ Page(
                     {
                         title: "How to get token",
                         description:
-                            "Go to https://n8n.cafero.town/github-widget/token",
+                            "Go to https://n8n.cafero.town/form/github-widget/token",
                     },
                 ],
             }));
