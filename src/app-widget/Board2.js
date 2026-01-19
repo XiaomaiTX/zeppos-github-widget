@@ -1,25 +1,19 @@
 import * as hmUI from "@zos/ui";
-import { log as Logger, px } from "@zos/utils";
+import { px } from "@zos/utils";
+import * as hmRouter from "@zos/router";
+import { LocalStorage } from "@zos/storage";
 
 import {
     generateHeatmapData,
     generateHeatmapBoxes,
     convertToHeatmapData,
 } from "../utils/method";
-import { testContributionsData } from "../graphql/test-data-contributions";
-
-const logger = Logger.getLogger("calories");
 
 AppWidget({
     onInit() {
-        logger.log("===onInit===");
+        console.log("===onInit===");
     },
-
-    onDataRestore() {},
-
     build() {
-        logger.log("[build]", hmUI.getAppWidgetSize());
-
         hmUI.setAppWidgetSize({
             h: px(194),
         });
@@ -34,7 +28,7 @@ AppWidget({
                     h: px(194),
                     color: 0x0d1117,
                     radius: px(36),
-                }
+                },
             );
             const strokeRect = hmUI.createWidget(hmUI.widget.STROKE_RECT, {
                 x: px(40),
@@ -52,8 +46,14 @@ AppWidget({
                 h: px(156),
             });
 
-            const githubHeatmapData = convertToHeatmapData(testContributionsData.data);
-            
+            const localStorage = new LocalStorage();
+            const contributionsData = localStorage.getItem(
+                "github-widget.contributions",
+            );
+            const githubHeatmapData = convertToHeatmapData(
+                JSON.parse(contributionsData).data,
+            );
+            console.log("[build] githubHeatmapData", githubHeatmapData);
 
             const boxPerRow = 16;
             const rows = 7;
@@ -65,7 +65,7 @@ AppWidget({
                 boxPerRow,
                 rows,
                 boxSize,
-                spacing
+                spacing,
             );
 
             boxList.forEach((box) => {
@@ -117,9 +117,10 @@ AppWidget({
                 }
             });
         } catch (error) {
-            logger.log(error);
+            console.log(error);
         }
     },
-
-    onResume() {},
+    onResume() {
+        
+    },
 });

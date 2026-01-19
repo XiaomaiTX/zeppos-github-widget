@@ -1,5 +1,7 @@
 import * as hmUI from "@zos/ui";
-import { log as Logger, px } from "@zos/utils";
+import { px } from "@zos/utils";
+import * as hmRouter from "@zos/router";
+import { LocalStorage } from "@zos/storage";
 
 import { BasePage } from "@zeppos/zml/base-page";
 import { reactive, effect, computed } from "@x1a0ma17x/zeppos-reactive";
@@ -11,11 +13,7 @@ import {
     convertToHeatmapData,
 } from "../utils/method";
 
-import { testContributionsData } from "../graphql/test-data-contributions";
-
 import * as Layout from "./Board1.layout";
-
-const logger = Logger.getLogger("Board1");
 
 const state = reactive({
     githubHeatmapData: [],
@@ -36,20 +34,13 @@ AppWidget(
             });
 
             try {
-                state.githubHeatmapData = computed(() => {
-                    return convertToHeatmapData(testContributionsData.data);
-                });
-
-                state.totalContributions =
-                    testContributionsData.data.user.contributionsCollection.contributionCalendar.totalContributions;
-
                 const backgroundFillRect = hmUI.createWidget(
                     hmUI.widget.FILL_RECT,
                     {
                         ...Layout.BACKGROUND_FILL_RECT,
                         color: 0x0d1117,
                         radius: px(36),
-                    }
+                    },
                 );
                 const backgroundStrokeRect = hmUI.createWidget(
                     hmUI.widget.STROKE_RECT,
@@ -58,11 +49,24 @@ AppWidget(
                         radius: px(36),
                         line_width: 2,
                         color: 0x30363d,
-                    }
+                    },
                 );
+
+                const localStorage = new LocalStorage();
+                const contributions = localStorage.getItem(
+                    "github-widget.contributions",
+                );
+                const githubHeatmapData = convertToHeatmapData(
+                    JSON.parse(contributions).data,
+                );
+
+                const totalContributions =
+                    JSON.parse(contributions).data.user.contributionsCollection
+                        .contributionCalendar.totalContributions;
+
                 const contributionText = hmUI.createWidget(hmUI.widget.TEXT, {
                     ...Layout.CONTRIBUTION_TEXT,
-                    text: `${state.totalContributions} Contributions`,
+                    text: `${totalContributions} Contributions`,
                     text_size: px(14),
                     align_h: hmUI.align.LEFT,
                     align_v: hmUI.align.CENTER_V,
@@ -76,30 +80,19 @@ AppWidget(
 
                 state.widgets.boxCanvas = hmUI.createWidget(
                     hmUI.widget.CANVAS,
-                    Layout.BOX_CANVAS
+                    Layout.BOX_CANVAS,
                 );
                 state.widgets.monthCanvas = hmUI.createWidget(
                     hmUI.widget.CANVAS,
-                    Layout.MONTH_CANVAS
+                    Layout.MONTH_CANVAS,
                 );
 
                 const boxPerRow = 23;
                 const rows = 7;
                 const boxSize = px(12);
                 const spacing = px(3);
-
-                effect(() => {
-                    console.log("[effect]");
-                    this.updateHeatmapUI(
-                        state.githubHeatmapData.value,
-                        boxPerRow,
-                        rows,
-                        boxSize,
-                        spacing
-                    );
-                });
             } catch (error) {
-                logger.log(error);
+                console.log(error);
             }
         },
         updateHeatmapUI(heatmapData, boxPerRow, rows, boxSize, spacing) {
@@ -108,13 +101,13 @@ AppWidget(
                 boxPerRow,
                 rows,
                 boxSize,
-                spacing
+                spacing,
             );
             const monthLabels = getMonthLabels(
                 heatmapData,
                 boxPerRow,
                 boxSize,
-                spacing
+                spacing,
             );
 
             state.widgets.boxCanvas.clear(Layout.BOX_CANVAS);
@@ -140,6 +133,14 @@ AppWidget(
                 });
             });
         },
-        onResume() {},
-    })
+        onResume() {
+            this.updateHeatmapUI(
+                githubHeatmapData,
+                boxPerRow,
+                rows,
+                boxSize,
+                spacing,
+            );
+        },
+    }),
 );
