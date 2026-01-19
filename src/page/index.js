@@ -4,6 +4,7 @@ import * as hmRouter from "@zos/router";
 import * as hmDevice from "@zos/device";
 import * as hmSensor from "@zos/sensor";
 import * as hmInteraction from "@zos/interaction";
+import { LocalStorage } from "@zos/storage";
 
 import { BasePage } from "@zeppos/zml/base-page";
 import { AsyncStorage } from "@silver-zepp/easy-storage";
@@ -23,6 +24,8 @@ import * as Styles from "zosLoader:./index.[pf].layout.js";
 
 const time = new hmSensor.Time();
 
+const localStorage = new LocalStorage();
+
 const state = reactive({
     uuid: hmDevice.getDeviceInfo().uuid,
     token: "",
@@ -38,10 +41,6 @@ Page(
         build() {
             AsyncStorage.ReadJson("config.json", (err, config) => {
                 if (!err) {
-                    // console.log(
-                    //     "config.data.contributions属性树:",
-                    //     JSON.stringify(config.data.contributions, null, 2)
-                    // );
                     state.lastUpdateTime =
                         config.settings.last_update_timestamp;
                     state.github_username = config.settings.github_username;
@@ -56,26 +55,28 @@ Page(
                     }
                 } else {
                     console.log("[config.json] not found, create new one");
-                    AsyncStorage.WriteJson(
-                        "config.json",
-                        {
-                            version: "1.0",
-                            settings: {
-                                github_username: "",
-                                last_update_timestamp: Date.now(),
-                                update_interval: 60 * 1000, // 60 seconds
-                                encryptedToken: "",
+                    if (!AsyncStorage.IsBusy()) {
+                        AsyncStorage.WriteJson(
+                            "config.json",
+                            {
+                                version: "1.0",
+                                settings: {
+                                    github_username: "",
+                                    last_update_timestamp: Date.now(),
+                                    update_interval: 60 * 1000, // 60 seconds
+                                    encryptedToken: "",
+                                },
+                                data: {
+                                    contributions: {},
+                                    user_info: {},
+                                    user_status: {},
+                                },
                             },
-                            data: {
-                                contributions: {},
-                                user_info: {},
-                                user_status: {},
+                            (err, ok) => {
+                                if (ok) console.log("[config.json] created");
                             },
-                        },
-                        (err, ok) => {
-                            if (ok) console.log("[config.json] created");
-                        },
-                    );
+                        );
+                    }
                 }
             });
 
@@ -152,16 +153,18 @@ Page(
                         if (!err) {
                             config.settings.github_username =
                                 state.github_username;
-                            AsyncStorage.WriteJson(
-                                "config.json",
-                                config,
-                                (err, ok) => {
-                                    if (ok)
-                                        console.log(
-                                            "[updateGitHubUsername] updated",
-                                        );
-                                },
-                            );
+                            if (!AsyncStorage.IsBusy()) {
+                                AsyncStorage.WriteJson(
+                                    "config.json",
+                                    config,
+                                    (err, ok) => {
+                                        if (ok)
+                                            console.log(
+                                                "[updateGitHubUsername] updated",
+                                            );
+                                    },
+                                );
+                            }
                         }
                     });
                     hmUI.deleteKeyboard();
@@ -191,14 +194,18 @@ Page(
                             if (!err) {
                                 config.settings.encryptedToken =
                                     state.encryptedToken;
-                                AsyncStorage.WriteJson(
-                                    "config.json",
-                                    config,
-                                    (err, ok) => {
-                                        if (ok)
-                                            console.log("[clearToken] updated");
-                                    },
-                                );
+                                if (!AsyncStorage.IsBusy()) {
+                                    AsyncStorage.WriteJson(
+                                        "config.json",
+                                        config,
+                                        (err, ok) => {
+                                            if (ok)
+                                                console.log(
+                                                    "[clearToken] updated",
+                                                );
+                                        },
+                                    );
+                                }
                             }
                         });
                         clearTokenDialog.show(false);
@@ -246,12 +253,17 @@ Page(
             this.queryGitHubData("contributions");
             this.queryGitHubData("userInfo");
             this.queryGitHubData("userStatus");
-
+        },
+        updateLastUpdateTime() {
             AsyncStorage.ReadJson("config.json", (err, config) => {
                 if (!err) {
-                    config.settings.last_update_timestamp = Date.now();
+                    let currentTimestamp = Date.now();
+                    config.settings.last_update_timestamp = currentTimestamp;
+                    state.lastUpdateTime = currentTimestamp;
                     AsyncStorage.WriteJson("config.json", config, (err, ok) => {
-                        if (ok) console.log("[updateGithubData] updated");
+                        if (ok) {
+                            console.log("[updateGithubData] updated");
+                        }
                     });
                 }
             });
@@ -277,28 +289,16 @@ Page(
                                 JSON.stringify(result.body, null, 2),
                             );
                             if (result.statusText === "OK") {
-                                AsyncStorage.ReadJson(
-                                    "config.json",
-                                    (err, config) => {
-                                        if (!err) {
-                                            let currentTimestamp = Date.now();
-                                            config.settings.last_update_timestamp =
-                                                currentTimestamp;
-                                            state.lastUpdateTime =
-                                                currentTimestamp;
-                                            config.data.contributions =
-                                                result.body;
-
-                                            AsyncStorage.WriteJson(
-                                                "config.json",
-                                                config,
-                                                (err, ok) => {
-                                                    if (ok) {
-                                                    }
-                                                },
-                                            );
-                                        }
-                                    },
+                                localStorage.setItem(
+                                    "github-widget.contributions",
+                                    JSON.stringify(result.body),
+                                );
+                                hmInteraction.showToast({
+                                    content: "Contributions updated",
+                                });
+                                this.updateLastUpdateTime();
+                                console.log(
+                                    "[queryGitHubData] contributions updated",
                                 );
                             }
                         })
@@ -321,34 +321,15 @@ Page(
                         }),
                     })
                         .then((result) => {
-                            console.log(
-                                "[queryGitHubData] userInfo",
-                                JSON.stringify(result.body, null, 2),
+                            localStorage.setItem(
+                                "github-widget.userInfo",
+                                JSON.stringify(result.body),
                             );
-                            if (result.statusText === "OK") {
-                                AsyncStorage.ReadJson(
-                                    "config.json",
-                                    (err, config) => {
-                                        if (!err) {
-                                            let currentTimestamp = Date.now();
-                                            config.settings.last_update_timestamp =
-                                                currentTimestamp;
-                                            state.lastUpdateTime =
-                                                currentTimestamp;
-                                            config.data.user_info = result.body;
-
-                                            AsyncStorage.WriteJson(
-                                                "config.json",
-                                                config,
-                                                (err, ok) => {
-                                                    if (ok) {
-                                                    }
-                                                },
-                                            );
-                                        }
-                                    },
-                                );
-                            }
+                            hmInteraction.showToast({
+                                content: "User info updated",
+                            });
+                            this.updateLastUpdateTime();
+                            console.log("[queryGitHubData] userInfo updated");
                         })
                         .catch((error) => {
                             console.error("error======>", error);
@@ -373,28 +354,16 @@ Page(
                                 JSON.stringify(result.body, null, 2),
                             );
                             if (result.statusText === "OK") {
-                                AsyncStorage.ReadJson(
-                                    "config.json",
-                                    (err, config) => {
-                                        if (!err) {
-                                            let currentTimestamp = Date.now();
-                                            config.settings.last_update_timestamp =
-                                                currentTimestamp;
-                                            state.lastUpdateTime =
-                                                currentTimestamp;
-                                            config.data.user_status =
-                                                result.body;
-
-                                            AsyncStorage.WriteJson(
-                                                "config.json",
-                                                config,
-                                                (err, ok) => {
-                                                    if (ok) {
-                                                    }
-                                                },
-                                            );
-                                        }
-                                    },
+                                localStorage.setItem(
+                                    "github-widget.userStatus",
+                                    JSON.stringify(result.body),
+                                );
+                                hmInteraction.showToast({
+                                    content: "User status updated",
+                                });
+                                this.updateLastUpdateTime();
+                                console.log(
+                                    "[queryGitHubData] userStatus updated",
                                 );
                             }
                         })
@@ -406,6 +375,7 @@ Page(
                     break;
             }
         },
+        fetchGitHubAvatar() {},
         onCall(req) {
             console.log("call req=>", JSON.stringify(req));
             if (req.method === "GitHubWidget.UpdateToken") {
