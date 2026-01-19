@@ -15,51 +15,43 @@ export const BACKGROUND_STROKE_RECT = {
 };
 
 export const AVATAR_IMG = {
-    x: px(60),
-    y: px(20),
-    w: px(60),
-    h: px(60),
+    x: px(40 + 14),
+    y: px(14),
+    w: px(96),
+    h: px(96),
     auto_scale: true,
 };
 
 export const NAME_TEXT = {
-    x: px(130),
-    y: px(25),
-    w: px(250),
-    h: px(30),
+    x: px(40 + 124),
+    y: px(23),
+    w: px(260),
+    h: px(45),
 };
 
-export const LOGIN_TEXT = {
-    x: px(130),
-    y: px(55),
-    w: px(250),
-    h: px(34),
+export const COMPANY_ICON = {
+    x: px(40 + 126 + 0),
+    y: px(71 + 0 + 5),
+    w: px(24),
+    h: px(24),
 };
 
 export const COMPANY_TEXT = {
-    x: px(60),
-    y: px(90),
-    w: px(200),
-    h: px(34),
+    x: px(40 + 126 + 31),
+    y: px(71),
+    w: px(254),
+    h: px(35),
 };
 
+export const FOLLOWERS_ICON = {
+    x: px(40 + 126 + 0),
+    y: px(71 + 38 + 5),
+    w: px(24),
+    h: px(24),
+};
 export const FOLLOWERS_TEXT = {
-    x: px(270),
-    y: px(90),
-    w: px(100),
-    h: px(34),
-};
-
-export const LOCATION_TEXT = {
-    x: px(60),
-    y: px(115),
-    w: px(200),
-    h: px(34),
-};
-
-export const FOLLOWING_TEXT = {
-    x: px(270),
-    y: px(115),
-    w: px(100),
-    h: px(34),
+    x: px(40 + 126 + 31),
+    y: px(71 + 38),
+    w: px(254),
+    h: px(35),
 };
