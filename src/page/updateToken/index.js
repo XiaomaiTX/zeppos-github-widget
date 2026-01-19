@@ -1,6 +1,7 @@
 import * as hmUI from "@zos/ui";
 import * as hmDevice from "@zos/device";
 import * as hmRouter from "@zos/router";
+import * as hmDisplay from "@zos/display";
 
 import { BasePage } from "@zeppos/zml/base-page";
 import { reactive, computed, effect } from "@x1a0ma17x/zeppos-reactive";
@@ -23,6 +24,16 @@ Page(
     BasePage({
         onInit() {
             console.log(state.encryptedToken);
+            hmDisplay.pauseDropWristScreenOff({
+                duration: 0,
+            });
+            hmDisplay.pausePalmScreenOff({
+                duration: 0,
+            });
+            hmDisplay.setPageBrightTime({
+                brightTime: 2147483000,
+            });
+
             AsyncStorage.ReadJson("config.json", (err, config) => {
                 if (!err) {
                     state.config = config;
@@ -44,7 +55,8 @@ Page(
                     },
                     {
                         title: "How to get token",
-                        description: "Go to https://n8n.cafero.town/github-widget/token",
+                        description:
+                            "Go to https://n8n.cafero.town/github-widget/token",
                     },
                 ],
             }));
@@ -62,12 +74,12 @@ Page(
                 method: "get",
                 url: `https://n8n.cafero.town/webhook/github-widget/get-token?code=${code}`,
                 // url: `https://n8n.cafero.town/webhook-test/ping`,
-            }).then((res) => {                
+            }).then((res) => {
                 // 检查响应状态码是否为200
                 // if (res.status !== 200) {
                 //     console.error("请求失败，状态码：", res.status);
                 //     return;
-                // }    
+                // }
                 console.log("[get token response]:", JSON.stringify(res.body));
                 if (res.body.token && res.body.token !== "") {
                     state.token = res.body.token;
@@ -75,7 +87,7 @@ Page(
                     console.log("[get token]:", state.token);
                     state.encryptedToken = AES.encrypt(
                         state.token,
-                        state.uuid
+                        state.uuid,
                     ).toString();
                     state.config.settings.encryptedToken = state.encryptedToken;
                     AsyncStorage.WriteJson(
@@ -86,10 +98,9 @@ Page(
                                 console.log("config.json updated");
                                 hmRouter.back();
                             }
-                        }
+                        },
                     );
-                }
-                else {
+                } else {
                     console.error("请求失败，状态码：", res.status);
                 }
             });
@@ -98,5 +109,5 @@ Page(
             hmUI.deleteKeyboard();
             console.log("UpdateToken Page destroyed");
         },
-    })
+    }),
 );
