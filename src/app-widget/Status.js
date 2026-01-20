@@ -4,7 +4,13 @@ import * as hmRouter from "@zos/router";
 import { LocalStorage } from "@zos/storage";
 
 import { BasePage } from "@zeppos/zml/base-page";
+import { reactive } from "@x1a0ma17x/zeppos-reactive";
 import * as Layout from "./Status.layout";
+
+const state = reactive({
+    userStatusData: {},
+    widgets: {},
+});
 
 AppWidget(
     BasePage({
@@ -39,49 +45,15 @@ AppWidget(
                 );
 
                 const localStorage = new LocalStorage();
-                const userStatusData = JSON.parse(
+                state.userStatusData = JSON.parse(
                     localStorage.getItem("github-widget.userStatus"),
                 );
-
-                const totalStarEarned = () => {
-                    let totalStarEarn = 0;
-                    for (const repo of userStatusData.data.user.repositories
-                        .nodes) {
-                        totalStarEarn += repo.stargazerCount;
-                    }
-                    return totalStarEarn;
-                };
-                const totalCommits = () => {
-                    return (
-                        userStatusData.data.user.currentYearContributions
-                            .totalCommitContributions || "unknown"
-                    );
-                };
-                const totalPRs = () => {
-                    return (
-                        userStatusData.data.user.currentYearContributions
-                            .totalPullRequestContributions || "unknown"
-                    );
-                };
-                const totalIssues = () => {
-                    return (
-                        userStatusData.data.user.currentYearContributions
-                            .totalIssueContributions || "unknown"
-                    );
-                };
-                const totalContributions = () => {
-                    return (
-                        userStatusData.data.user.lastYearContributions
-                            .totalRepositoriesWithContributedCommits ||
-                        "unknown"
-                    );
-                };
 
                 const titleText = hmUI.createWidget(hmUI.widget.TEXT, {
                     ...Layout.TITLE_TEXT,
                     text_size: px(26),
                     color: 0x57a5fd,
-                    text: `${userStatusData.data.user.login || "unknown"}'s Status`,
+                    text: `${state.userStatusData.data.user.login || "unknown"}'s Status`,
                 });
 
                 const totalStarEarnedIcon = hmUI.createWidget(hmUI.widget.IMG, {
@@ -97,12 +69,15 @@ AppWidget(
                         text: `Total Star Earned:`,
                     },
                 );
-                const totalStarEarnedValue = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.TOTAL_STAR_EARNED_VALUE,
-                    text_size: px(22),
-                    color: 0xc3d1d9,
-                    text: `${totalStarEarned()}`,
-                });
+                state.widgets.totalStarEarnedValue = hmUI.createWidget(
+                    hmUI.widget.TEXT,
+                    {
+                        ...Layout.TOTAL_STAR_EARNED_VALUE,
+                        text_size: px(22),
+                        color: 0xc3d1d9,
+                        text: `${this.totalStarEarned()}`,
+                    },
+                );
 
                 const totalCommitsIcon = hmUI.createWidget(hmUI.widget.IMG, {
                     ...Layout.TOTAL_COMMITS_ICON,
@@ -114,13 +89,16 @@ AppWidget(
                     color: 0xc3d1d9,
                     text: `Total Commits:`,
                 });
-                const totalCommitValue = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.TOTAL_COMMITS_VALUE,
-                    text_size: px(22),
-                    color: 0xc3d1d9,
-                    text: `${totalCommits()}`,
-                });
-                
+                state.widgets.totalCommitValue = hmUI.createWidget(
+                    hmUI.widget.TEXT,
+                    {
+                        ...Layout.TOTAL_COMMITS_VALUE,
+                        text_size: px(22),
+                        color: 0xc3d1d9,
+                        text: `${this.totalCommits()}`,
+                    },
+                );
+
                 const totalPRsIcon = hmUI.createWidget(hmUI.widget.IMG, {
                     ...Layout.TOTAL_PRS_ICON,
                     src: "Status/total-prs-icon.png",
@@ -131,12 +109,15 @@ AppWidget(
                     color: 0xc3d1d9,
                     text: `Total PRs:`,
                 });
-                const totalPRsValue = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.TOTAL_PRS_VALUE,
-                    text_size: px(22),
-                    color: 0xc3d1d9,
-                    text: `${totalPRs()}`,
-                });
+                state.widgets.totalPRsValue = hmUI.createWidget(
+                    hmUI.widget.TEXT,
+                    {
+                        ...Layout.TOTAL_PRS_VALUE,
+                        text_size: px(22),
+                        color: 0xc3d1d9,
+                        text: `${this.totalPRs()}`,
+                    },
+                );
                 const totalIssuesIcon = hmUI.createWidget(hmUI.widget.IMG, {
                     ...Layout.TOTAL_ISSUES_ICON,
                     src: "Status/total-issues-icon.png",
@@ -147,12 +128,15 @@ AppWidget(
                     color: 0xc3d1d9,
                     text: `Total Issues:`,
                 });
-                const totalIssuesValue = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.TOTAL_ISSUES_VALUE,
-                    text_size: px(22),
-                    color: 0xc3d1d9,
-                    text: `${totalIssues()}`,
-                });
+                state.widgets.totalIssuesValue = hmUI.createWidget(
+                    hmUI.widget.TEXT,
+                    {
+                        ...Layout.TOTAL_ISSUES_VALUE,
+                        text_size: px(22),
+                        color: 0xc3d1d9,
+                        text: `${this.totalIssues()}`,
+                    },
+                );
                 const totalContributionsIcon = hmUI.createWidget(
                     hmUI.widget.IMG,
                     {
@@ -169,18 +153,81 @@ AppWidget(
                         text: `Last Year Contributions:`,
                     },
                 );
-                const totalContributionsValue = hmUI.createWidget(hmUI.widget.TEXT, {
-                    ...Layout.TOTAL_CONTRIBUTIONS_VALUE,
-                    text_size: px(22),
-                    color: 0xc3d1d9,
-                    text: `${totalContributions()}`,
-                });
+                state.widgets.totalContributionsValue = hmUI.createWidget(
+                    hmUI.widget.TEXT,
+                    {
+                        ...Layout.TOTAL_CONTRIBUTIONS_VALUE,
+                        text_size: px(22),
+                        color: 0xc3d1d9,
+                        text: `${this.totalContributions()}`,
+                    },
+                );
             } catch (error) {
                 console.log(error);
             }
         },
+        totalStarEarned() {
+            let totalStarEarn = 0;
+            for (const repo of state.userStatusData.data.user.repositories
+                .nodes) {
+                totalStarEarn += repo.stargazerCount;
+            }
+            return totalStarEarn;
+        },
+        totalCommits() {
+            return (
+                state.userStatusData.data.user.currentYearContributions
+                    .totalCommitContributions || "unknown"
+            );
+        },
+        totalPRs() {
+            return (
+                state.userStatusData.data.user.currentYearContributions
+                    .totalPullRequestContributions || "unknown"
+            );
+        },
+        totalIssues() {
+            return (
+                state.userStatusData.data.user.currentYearContributions
+                    .totalIssueContributions || "unknown"
+            );
+        },
+        totalContributions() {
+            return (
+                state.userStatusData.data.user.lastYearContributions
+                    .totalRepositoriesWithContributedCommits || "unknown"
+            );
+        },
 
+        updateStatus() {
+            const localStorage = new LocalStorage();
+            state.userStatusData = JSON.parse(
+                localStorage.getItem("github-widget.userStatus"),
+            );
+
+            state.widgets.totalStarEarnedValue.setProperty(
+                hmUI.prop.TEXT,
+                `${this.totalStarEarned()}`,
+            );
+            state.widgets.totalCommitValue.setProperty(
+                hmUI.prop.TEXT,
+                `${this.totalCommits()}`,
+            );
+            state.widgets.totalPRsValue.setProperty(
+                hmUI.prop.TEXT,
+                `${this.totalPRs()}`,
+            );
+            state.widgets.totalIssuesValue.setProperty(
+                hmUI.prop.TEXT,
+                `${this.totalIssues()}`,
+            );
+            state.widgets.totalContributionsValue.setProperty(
+                hmUI.prop.TEXT,
+                `${this.totalContributions()}`,
+            );
+        },
         onResume() {
+            this.updateStatus();
         },
     }),
 );

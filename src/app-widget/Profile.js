@@ -4,7 +4,15 @@ import * as hmRouter from "@zos/router";
 import { LocalStorage } from "@zos/storage";
 
 import { BasePage } from "@zeppos/zml/base-page";
+
+import { reactive } from "@x1a0ma17x/zeppos-reactive";
+
 import * as Layout from "./Profile.layout";
+
+const state = reactive({
+    userInfo: {},
+    widgets: {},
+});
 
 AppWidget(
     BasePage({
@@ -39,7 +47,7 @@ AppWidget(
                 );
 
                 const localStorage = new LocalStorage();
-                const userInfoData = JSON.parse(
+                state.userInfoData = JSON.parse(
                     localStorage.getItem("github-widget.userInfo"),
                 );
                 const avatarImg = hmUI.createWidget(hmUI.widget.IMG, {
@@ -52,8 +60,8 @@ AppWidget(
                     text_size: px(34),
                     color: 0xffffff,
                     text:
-                        userInfoData.data.user.name ||
-                        userInfoData.data.user.login,
+                        state.userInfoData.data.user.name ||
+                        state.userInfoData.data.user.login,
                 });
 
                 const companyIcon = hmUI.createWidget(hmUI.widget.IMG, {
@@ -65,7 +73,7 @@ AppWidget(
                     ...Layout.COMPANY_TEXT,
                     text_size: px(26),
                     color: 0x8b949e,
-                    text: userInfoData.data.user.company || "No company",
+                    text: state.userInfoData.data.user.company || "No company",
                 });
 
                 const followersIcon = hmUI.createWidget(hmUI.widget.IMG, {
@@ -76,14 +84,37 @@ AppWidget(
                     ...Layout.FOLLOWERS_TEXT,
                     text_size: px(26),
                     color: 0x8b949e,
-                    text: `${userInfoData.data.user.followers.totalCount} followers`,
+                    text: `${state.userInfoData.data.user.followers.totalCount} followers`,
                 });
             } catch (error) {
                 console.log(error);
             }
         },
-
+        updateProfileUI() {
+            try {
+                const localStorage = new LocalStorage();
+                state.userInfoData = JSON.parse(
+                    localStorage.getItem("github-widget.userInfo"),
+                );
+                state.widgets.nameText.setProperty(
+                    hmUI.prop.TEXT,
+                    state.userInfoData.data.user.name ||
+                        state.userInfoData.data.user.login,
+                );
+                state.widgets.companyText.setProperty(
+                    hmUI.prop.TEXT,
+                    state.userInfoData.data.user.company || "No company",
+                );
+                state.widgets.followersText.setProperty(
+                    hmUI.prop.TEXT,
+                    `${state.userInfoData.data.user.followers.totalCount} followers`,
+                );
+            } catch (error) {
+                console.log(error);
+            }
+        },
         onResume() {
+            this.updateUserInfoData();
         },
     }),
 );

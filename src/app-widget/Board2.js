@@ -12,7 +12,13 @@ import {
 
 const state = reactive({
     githubHeatmapData: [],
+    widgets: {},
 });
+
+const boxPerRow = 16;
+const rows = 7;
+const boxSize = 18;
+const spacing = 5;
 
 AppWidget({
     onInit() {
@@ -44,7 +50,7 @@ AppWidget({
                 line_width: 2,
                 color: 0x30363d,
             });
-            const canvas = hmUI.createWidget(hmUI.widget.CANVAS, {
+            state.widgets.canvas = hmUI.createWidget(hmUI.widget.CANVAS, {
                 x: px(40 + 19),
                 y: px(19),
                 w: px(363),
@@ -60,11 +66,6 @@ AppWidget({
             );
             console.log("[build] githubHeatmapData", state.githubHeatmapData);
 
-            const boxPerRow = 16;
-            const rows = 7;
-            const boxSize = 18;
-            const spacing = 5;
-
             const boxList = generateHeatmapBoxes(
                 state.githubHeatmapData,
                 boxPerRow,
@@ -75,7 +76,7 @@ AppWidget({
 
             boxList.forEach((box) => {
                 if (box.x === 0 && box.y === 0) {
-                    canvas.drawImage({
+                    state.widgets.canvas.drawImage({
                         x: box.x,
                         y: box.y,
                         w: box.w,
@@ -84,7 +85,7 @@ AppWidget({
                         image: `Board2/left-top-${box.level}@1x.png`,
                     });
                 } else if (box.x + box.w === 363 && box.y === 0) {
-                    canvas.drawImage({
+                    state.widgets.canvas.drawImage({
                         x: box.x,
                         y: box.y,
                         w: box.w,
@@ -93,7 +94,7 @@ AppWidget({
                         image: `Board2/right-top-${box.level}@1x.png`,
                     });
                 } else if (box.x === 0 && box.y + box.h === 156) {
-                    canvas.drawImage({
+                    state.widgets.canvas.drawImage({
                         x: box.x,
                         y: box.y,
                         w: box.w,
@@ -102,7 +103,7 @@ AppWidget({
                         image: `Board2/left-bottom-${box.level}@1x.png`,
                     });
                 } else if (box.x + box.w === 363 && box.y + box.h === 156) {
-                    canvas.drawImage({
+                    state.widgets.canvas.drawImage({
                         x: box.x,
                         y: box.y,
                         w: box.w,
@@ -111,7 +112,7 @@ AppWidget({
                         image: `Board2/right-bottom-${box.level}@1x.png`,
                     });
                 } else {
-                    canvas.drawImage({
+                    state.widgets.canvas.drawImage({
                         x: box.x,
                         y: box.y,
                         w: box.w,
@@ -125,7 +126,77 @@ AppWidget({
             console.log(error);
         }
     },
+    updateHeatmapUI() {
+        const localStorage = new LocalStorage();
+        const contributionsData = localStorage.getItem(
+            "github-widget.contributions",
+        );
+        state.githubHeatmapData = convertToHeatmapData(
+            JSON.parse(contributionsData).data,
+        );
+        const boxList = generateHeatmapBoxes(
+            state.githubHeatmapData,
+            boxPerRow,
+            rows,
+            boxSize,
+            spacing,
+        );
+        state.widgets.canvas.clear({
+            x: px(40 + 19),
+            y: px(19),
+            w: px(363),
+            h: px(156),
+        });
+        boxList.forEach((box) => {
+            if (box.x === 0 && box.y === 0) {
+                state.widgets.canvas.drawImage({
+                    x: box.x,
+                    y: box.y,
+                    w: box.w,
+                    h: box.h,
+                    alpha: 255,
+                    image: `Board2/left-top-${box.level}@1x.png`,
+                });
+            } else if (box.x + box.w === 363 && box.y === 0) {
+                state.widgets.canvas.drawImage({
+                    x: box.x,
+                    y: box.y,
+                    w: box.w,
+                    h: box.h,
+                    alpha: 255,
+                    image: `Board2/right-top-${box.level}@1x.png`,
+                });
+            } else if (box.x === 0 && box.y + box.h === 156) {
+                state.widgets.canvas.drawImage({
+                    x: box.x,
+                    y: box.y,
+                    w: box.w,
+                    h: box.h,
+                    alpha: 255,
+                    image: `Board2/left-bottom-${box.level}@1x.png`,
+                });
+            } else if (box.x + box.w === 363 && box.y + box.h === 156) {
+                state.widgets.canvas.drawImage({
+                    x: box.x,
+                    y: box.y,
+                    w: box.w,
+                    h: box.h,
+                    alpha: 255,
+                    image: `Board2/right-bottom-${box.level}@1x.png`,
+                });
+            } else {
+                state.widgets.canvas.drawImage({
+                    x: box.x,
+                    y: box.y,
+                    w: box.w,
+                    h: box.h,
+                    alpha: 255,
+                    image: `Board2/common-${box.level}.png`,
+                });
+            }
+        });
+    },
     onResume() {
-        
+        this.updateHeatmapUI();
     },
 });

@@ -22,6 +22,11 @@ const state = reactive({
     widgets: {},
 });
 
+const boxPerRow = 23;
+const rows = 7;
+const boxSize = px(12);
+const spacing = px(3);
+
 AppWidget(
     BasePage({
         onInit() {},
@@ -61,8 +66,9 @@ AppWidget(
                 );
 
                 state.totalContributions =
-                    JSON.parse(contributions).data.user.contributionsCollection
-                        .contributionCalendar.totalContributions;
+                    JSON.parse(
+                        contributions,
+                    ).data.user.contributionsCollection.contributionCalendar.totalContributions;
 
                 const contributionText = hmUI.createWidget(hmUI.widget.TEXT, {
                     ...Layout.CONTRIBUTION_TEXT,
@@ -86,35 +92,33 @@ AppWidget(
                     hmUI.widget.CANVAS,
                     Layout.MONTH_CANVAS,
                 );
-
-                const boxPerRow = 23;
-                const rows = 7;
-                const boxSize = px(12);
-                const spacing = px(3);
-                effect(() => {
-                    console.log("[effect]");
-                    this.updateHeatmapUI(
-                        state.githubHeatmapData,
-                        boxPerRow,
-                        rows,
-                        boxSize,
-                        spacing
-                    );
-                });
             } catch (error) {
                 console.log(error);
             }
         },
-        updateHeatmapUI(heatmapData, boxPerRow, rows, boxSize, spacing) {
+        updateHeatmapUI() {
+            const localStorage = new LocalStorage();
+            const contributions = localStorage.getItem(
+                "github-widget.contributions",
+            );
+            state.githubHeatmapData = convertToHeatmapData(
+                JSON.parse(contributions).data,
+            );
+
+            state.totalContributions =
+                JSON.parse(
+                    contributions,
+                ).data.user.contributionsCollection.contributionCalendar.totalContributions;
+
             const boxList = generateHeatmapBoxes(
-                heatmapData,
+                state.githubHeatmapData,
                 boxPerRow,
                 rows,
                 boxSize,
                 spacing,
             );
             const monthLabels = getMonthLabels(
-                heatmapData,
+                state.githubHeatmapData,
                 boxPerRow,
                 boxSize,
                 spacing,
@@ -144,6 +148,12 @@ AppWidget(
             });
         },
         onResume() {
+            this.updateHeatmapUI(
+                boxPerRow,
+                rows,
+                boxSize,
+                spacing,
+            );
         },
     }),
 );
